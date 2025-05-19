@@ -151,14 +151,21 @@
         <h2 class="title is-3">Multi-Agent Reinforcement Learning (MARL) on PdM</h2>
         <div class="content has-text-justified">
 
+<!-- HERO TITLE ─────────────────────────────────────────────────────────── -->
+<h1 class="title is-1 publication-title">
+  Multi-Agent Reinforcement Learning for Enhanced Predictive Maintenance in Complex Systems
+</h1>
 
-    <section>
-        <h2>Multi-Agent RL Overview</h2>
-        <p>In multi-agent reinforcement learning, multiple decision-making agents learn and interact in a shared environment. This setting introduces unique challenges beyond single-agent RL, such as non-stationarity (an agent’s environment is changing due to other agents’ learning), credit assignment (attributing a global reward to individual agents’ actions), and partial observability (each agent has limited local view). Traditionally, MARL problems are categorized by the nature of agent interactions – fully cooperative (agents share goals and rewards), fully competitive (zero-sum games), or mixed settings. To handle these challenges, modern MARL algorithms often leverage centralized training with decentralized execution (CTDE): agents are trained with global information (e.g. a centralized critic or joint value function) but execute using only local observations, combining the stability of centralized learning with the scalability of independent action at runtime. Below, we survey major MARL methodologies from the past five years and compare their approaches.</p>
-    </section>
-
-
-
+<!-- NEW CONTENT (after the last existing <section> but before </div></section>) -->
+<section>
+  <h2>Executive Summary</h2>
+  <p>
+    This report investigates the synergy between Multi-Agent Reinforcement Learning (MARL) and Predictive Maintenance (PdM) for large-scale industrial systems.  Traditional PdM predicts failures on a per-asset basis; MARL instead learns
+    <em>decentralised, co-ordinated</em> policies across interacting components or maintenance teams, addressing non-stationarity, credit assignment and system-level optimisation.  Key findings show that MARL can lower downtime, reduce maintenance cost and
+    adapt in real-time to evolving plant conditions.  We outline five concrete research plans—ranging from QMIX on the AI4I-2020 dataset to MADDPG-controlled maintenance robots and Transformer-based sensor agents—designed to validate these claims with both
+    real and synthetic PdM data.
+  </p>
+</section>
           <!-- INSERT RIGHT AFTER THE EXECUTIVE-SUMMARY </section> BLOCK -->
 <section>
   <h2>2&nbsp;· Deep Dive into Multi-Agent Reinforcement Learning (MARL)</h2>
@@ -265,6 +272,211 @@
     mean-field extensions, and Transformer-based MAT push scalability and generalisation.
   </p>
 </section>
+
+          <!-- INSERT RIGHT AFTER THE MARL SECTION’S </section> -->
+<section>
+  <h2>3&nbsp;· Comprehensive Understanding of Predictive&nbsp;Maintenance&nbsp;(PdM)</h2>
+
+  <!-- --- 3.1 Definition --- -->
+  <h3>3.1 Defining Predictive Maintenance</h3>
+  <p>
+    Predictive&nbsp;Maintenance (PdM) is a data-driven strategy that forecasts equipment
+    failures and schedules interventions exactly when needed—<em>before</em> breakdown but
+    <em>after</em> maximum useful life is extracted.  By continuously monitoring sensor
+    streams (vibration, temperature, acoustics, lubrication, etc.), PdM improves uptime,
+    reduces maintenance cost, and enhances safety versus preventive (time-based) or
+    reactive (run-to-failure) policies.
+  </p>
+
+  <!-- --- 3.2 Working principles --- -->
+  <h3>3.2 Working Principles</h3>
+  <p>
+    <strong>Data acquisition.</strong> On-board sensors stream high-frequency telemetry to
+    an IoT backbone.<br>
+    <strong>Condition monitoring.</strong> Baseline deviation, trend analysis, and anomaly
+    detection flag incipient faults.<br>
+    <strong>Predictive modelling.</strong> Classical ML (e.g.&nbsp;Random Forests,
+    SVMs) and deep learning (CNNs, LSTMs, GRUs, auto-encoders) estimate Remaining Useful
+    Lifetime (RUL) or failure probability, guiding just-in-time maintenance.
+  </p>
+
+  <!-- --- 3.3 Current modelling landscape --- -->
+  <h3>3.3 High-Performing Models &amp; Operational Challenges</h3>
+  <p>
+    Deep sequence models dominate modern PdM benchmarks: LSTMs/GRUs capture long-range
+    temporal dependencies; CNNs excel when signals are converted to images
+    (e.g.&nbsp;vibration spectrograms); auto-encoders learn reconstruction-based anomaly
+    scores.  Obstacles remain—massive historical data requirements, siloed tables with
+    mismatched sampling rates, and class imbalance (failures are rare).  Operational
+    deployment further demands interpretable predictions and robust data pipelines.
+  </p>
+
+  <!-- --- 3.4 Public & synthetic datasets --- -->
+  <h3>3.4 Datasets &amp; Benchmarks used in Top-Tier ML Conferences</h3>
+  <table class="table is-striped is-fullwidth">
+    <thead>
+      <tr>
+        <th>Dataset</th><th>Source</th><th>Key Features</th>
+        <th>Typical Tasks</th><th>Real / Synthetic</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>AI4I&nbsp;2020</td>
+        <td>UCI / Kaggle</td>
+        <td>10 k rows, 14 sensors, 5 failure modes</td>
+        <td>Failure classification, XAI studies</td>
+        <td>Synthetic</td>
+      </tr>
+      <tr>
+        <td>CMAPSS (Turbofan)</td>
+        <td>NASA PCoE</td>
+        <td>Multivariate engine telemetry, run-to-failure</td>
+        <td>RUL regression</td>
+        <td>Real</td>
+      </tr>
+      <tr>
+        <td>ALPI</td>
+        <td>IEEE DataPort</td>
+        <td>Packaging-machine alarm logs</td>
+        <td>Anomaly / fault prediction</td>
+        <td>Real</td>
+      </tr>
+      <tr>
+        <td>Naval Propulsion CBM</td>
+        <td>UCI</td>
+        <td>Marine engine sensor suite</td>
+        <td>Condition monitoring</td>
+        <td>Real</td>
+      </tr>
+      <tr>
+        <td>Genesis Demonstrator</td>
+        <td>Kaggle</td>
+        <td>Sensor data, multi-unit machine</td>
+        <td>Failure prediction</td>
+        <td>Real</td>
+      </tr>
+      <tr>
+        <td>Gearbox Fault</td>
+        <td>Kaggle</td>
+        <td>Vibration signals</td>
+        <td>Fault diagnosis</td>
+        <td>Real</td>
+      </tr>
+      <tr>
+        <td>Hydraulic System</td>
+        <td>UCI</td>
+        <td>Pressure, temperature, flow sensors</td>
+        <td>Condition monitoring</td>
+        <td>Real</td>
+      </tr>
+      <tr>
+        <td>Ultrasonic Flowmeter</td>
+        <td>UCI</td>
+        <td>Flow diagnostics</td>
+        <td>Anomaly detection</td>
+        <td>Real</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Because industrial data are often proprietary, synthetic generators such as
+    <code>TSGM</code> have become popular to prototype algorithms under controlled
+    failure distributions while respecting privacy constraints.
+  </p>
+</section>
+<!-- INSERT RIGHT AFTER THE PDM SECTION’S </section> -->
+<section>
+  <h2>4&nbsp;· Exploring the Synergy&nbsp;— Multi-Agent RL for Predictive Maintenance</h2>
+
+  <!-- --- 4.1 Research problems & challenges --- -->
+  <h3>4.1 Identifying Research Problems &amp; Challenges</h3>
+  <p>
+    Traditional PdM treats each asset in isolation, yet industrial plants exhibit strong
+    inter-component dependencies: cooling loops affect spindle life, pumps influence
+    bearing load, etc.  MARL provides a principled framework to <em>jointly</em> optimise
+    maintenance decisions across such coupled assets, be they physical robots, distributed
+    sensors, or human technicians.  Key challenges include defining joint state/action
+    spaces, designing sparse but informative rewards (downtime ↘, cost ↘, safety ↗),
+    coping with long temporal horizons, and ensuring policy interpretability for field
+    engineers.
+  </p>
+
+  <!-- --- 4.2 How existing MARL methods map to PdM needs --- -->
+  <h3>4.2 Leveraging MARL Methodologies for PdM</h3>
+  <p>
+    <strong>Value-factorisation</strong> (QMIX, QPLEX) enables decentralised agents
+    (e.g.&nbsp;sensors) to learn local actions that minimise system-wide risk.  
+    <strong>Central-critic actor–critic</strong> algorithms (MADDPG, MAPPO) suit teams of
+    maintenance robots needing continuous control under mixed objectives.  
+    <strong>Counterfactual methods</strong> (COMA) illuminate which agent’s inspection
+    avoided a failure, solving credit assignment.  
+    <strong>Communication-learning nets</strong> (CommNet, ATOC) teach agents when &amp;
+    what to broadcast, reducing bandwidth while boosting diagnostic accuracy.  
+    Finally, <strong>Transformer-based MAT</strong> treats multi-sensor time-series as
+    sequences, scaling to variable asset counts and heterogeneous sensors.
+  </p>
+
+  <!-- --- 4.3 Five concrete research plans --- -->
+  <h3>4.3 Detailed Research Plans</h3>
+
+  <h4>Research Plan 1 · QMIX on AI4I-2020</h4>
+  <ul>
+    <li><strong>Dataset:</strong> AI4I 2020 synthetic milling dataset (14 sensors, 5 failure modes).</li>
+    <li><strong>Agents &amp; Observations:</strong> Treat each key sensor (temp, vibration, torque …) as an agent.</li>
+    <li><strong>MARL Model:</strong> QMIX with <code>PyMARL</code>.</li>
+    <li><strong>Modifications:</strong> GRU encoder per agent to capture temporal context; focal-loss to rebalance classes.</li>
+    <li><strong>Evaluation:</strong> Precision, Recall, F1, AUC vs single-agent NN baseline.</li>
+  </ul>
+
+  <h4>Research Plan 2 · MADDPG Simulated Maintenance Robots</h4>
+  <ul>
+    <li><strong>Environment:</strong> SimPy-based factory with multiple assets; actions = inspect / lubricate / repair.</li>
+    <li><strong>Dataset:</strong> Synthetic online simulation (no real logs required).</li>
+    <li><strong>MARL Model:</strong> MADDPG (PyTorch RL or TF-Agents).</li>
+    <li><strong>Reward:</strong> −(downtime + maintenance cost); +uptime.</li>
+    <li><strong>Metrics:</strong> Mean failures ↓, total cost ↓, average uptime ↑ over 10⁶ steps.</li>
+  </ul>
+
+  <h4>Research Plan 3 · MAT for Multi-Sensor RUL Prediction</h4>
+  <ul>
+    <li><strong>Dataset:</strong> Any public multi-sensor time-series (e.g.&nbsp;Hydraulic System).</li>
+    <li><strong>Agents:</strong> One per sensor stream; observations are sliding windows.</li>
+    <li><strong>MARL Model:</strong> Multi-Agent Transformer (MAT) in PyTorch.</li>
+    <li><strong>Adaptation:</strong> Sigmoid head for binary failure; variable sequence lengths.</li>
+    <li><strong>Evaluation:</strong> AUROC vs LSTM and ARIMA baselines.</li>
+  </ul>
+
+  <h4>Research Plan 4 · VDN on Pump–Motor–Bearing Simulator</h4>
+  <ul>
+    <li><strong>Data:</strong> Synthetic generator (TSGM) with mutual degradation coupling.</li>
+    <li><strong>Agents:</strong> Pump, motor, bearing (3).</li>
+    <li><strong>MARL Model:</strong> Value-Decomposition Networks (VDN) via <code>PyMARL</code>.</li>
+    <li><strong>Reward:</strong> Shared function of system uptime − maintenance cost.</li>
+    <li><strong>Benchmark:</strong> Compare to fixed-interval maintenance policy.</li>
+  </ul>
+
+  <h4>Research Plan 5 · CommNet for Sensor-Agent Communication</h4>
+  <ul>
+    <li><strong>Dataset:</strong> Same as Plan 3 (real) or CMAPSS.</li>
+    <li><strong>Agents:</strong> Each sensor embeds readings and communicates via learned channels.</li>
+    <li><strong>MARL Model:</strong> CommNet implemented in PyTorch.</li>
+    <li><strong>Study:</strong> Ablate communication; measure failure-prediction accuracy.</li>
+    <li><strong>Outcome Metric:</strong> Accuracy ↑ and false-alarm rate ↓ vs non-communicative baseline.</li>
+  </ul>
+
+</section>
+
+
+
+
+
+
+
+
+
+
 
 
 
