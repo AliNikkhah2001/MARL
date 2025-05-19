@@ -167,6 +167,255 @@
   </p>
 </section>
           <!-- INSERT RIGHT AFTER THE EXECUTIVE-SUMMARY </section> BLOCK -->
+
+<section>
+  <h2>6&nbsp;· Predictive&nbsp;Maintenance Research Plans with Reinforcement Learning (RL / MARL)</h2>
+  <p class="has-text-justified">
+    The four rigorously specified studies below leverage NASA’s open turbofan-engine and
+    lithium-ion battery datasets to demonstrate how single- and multi-agent RL can move
+    beyond fixed RUL-threshold strategies toward adaptive, cost-optimal maintenance and
+    operation policies.  Each plan details the <em>environment design</em>,
+    <em>state / action / reward</em> formulation, <em>algorithms &amp; libraries</em>,
+    <em>baseline comparisons</em>, <em>evaluation metrics</em>, and a realistic
+    <em>feasibility assessment</em>.
+  </p>
+
+
+
+  <h2>#&nbsp;Research plans for general  Predictive Maintenance</h2>
+
+  <!-- --- 4.1 Research problems & challenges --- -->
+  <h3>4.1 Identifying Research Problems &amp; Challenges</h3>
+  <p>
+    Traditional PdM treats each asset in isolation, yet industrial plants exhibit strong
+    inter-component dependencies: cooling loops affect spindle life, pumps influence
+    bearing load, etc.  MARL provides a principled framework to <em>jointly</em> optimise
+    maintenance decisions across such coupled assets, be they physical robots, distributed
+    sensors, or human technicians.  Key challenges include defining joint state/action
+    spaces, designing sparse but informative rewards (downtime ↘, cost ↘, safety ↗),
+    coping with long temporal horizons, and ensuring policy interpretability for field
+    engineers.
+  </p>
+
+  <!-- --- 4.2 How existing MARL methods map to PdM needs --- -->
+  <h3>4.2 Leveraging MARL Methodologies for PdM</h3>
+  <p>
+    <strong>Value-factorisation</strong> (QMIX, QPLEX) enables decentralised agents
+    (e.g.&nbsp;sensors) to learn local actions that minimise system-wide risk.  
+    <strong>Central-critic actor–critic</strong> algorithms (MADDPG, MAPPO) suit teams of
+    maintenance robots needing continuous control under mixed objectives.  
+    <strong>Counterfactual methods</strong> (COMA) illuminate which agent’s inspection
+    avoided a failure, solving credit assignment.  
+    <strong>Communication-learning nets</strong> (CommNet, ATOC) teach agents when &amp;
+    what to broadcast, reducing bandwidth while boosting diagnostic accuracy.  
+    Finally, <strong>Transformer-based MAT</strong> treats multi-sensor time-series as
+    sequences, scaling to variable asset counts and heterogeneous sensors.
+  </p>
+
+  <!-- --- 4.3 Five concrete research plans --- -->
+  <h3>4.3 Detailed Research Plans</h3>
+
+  <h4>Research Plan 1 · QMIX on AI4I-2020</h4>
+  <ul>
+    <li><strong>Dataset:</strong> AI4I 2020 synthetic milling dataset (14 sensors, 5 failure modes).</li>
+    <li><strong>Agents &amp; Observations:</strong> Treat each key sensor (temp, vibration, torque …) as an agent.</li>
+    <li><strong>MARL Model:</strong> QMIX with <code>PyMARL</code>.</li>
+    <li><strong>Modifications:</strong> GRU encoder per agent to capture temporal context; focal-loss to rebalance classes.</li>
+    <li><strong>Evaluation:</strong> Precision, Recall, F1, AUC vs single-agent NN baseline.</li>
+  </ul>
+
+  <h4>Research Plan 2 · MADDPG Simulated Maintenance Robots</h4>
+  <ul>
+    <li><strong>Environment:</strong> SimPy-based factory with multiple assets; actions = inspect / lubricate / repair.</li>
+    <li><strong>Dataset:</strong> Synthetic online simulation (no real logs required).</li>
+    <li><strong>MARL Model:</strong> MADDPG (PyTorch RL or TF-Agents).</li>
+    <li><strong>Reward:</strong> −(downtime + maintenance cost); +uptime.</li>
+    <li><strong>Metrics:</strong> Mean failures ↓, total cost ↓, average uptime ↑ over 10⁶ steps.</li>
+  </ul>
+
+  <h4>Research Plan 3 · MAT for Multi-Sensor RUL Prediction</h4>
+  <ul>
+    <li><strong>Dataset:</strong> Any public multi-sensor time-series (e.g.&nbsp;Hydraulic System).</li>
+    <li><strong>Agents:</strong> One per sensor stream; observations are sliding windows.</li>
+    <li><strong>MARL Model:</strong> Multi-Agent Transformer (MAT) in PyTorch.</li>
+    <li><strong>Adaptation:</strong> Sigmoid head for binary failure; variable sequence lengths.</li>
+    <li><strong>Evaluation:</strong> AUROC vs LSTM and ARIMA baselines.</li>
+  </ul>
+
+  <h4>Research Plan 4 · VDN on Pump–Motor–Bearing Simulator</h4>
+  <ul>
+    <li><strong>Data:</strong> Synthetic generator (TSGM) with mutual degradation coupling.</li>
+    <li><strong>Agents:</strong> Pump, motor, bearing (3).</li>
+    <li><strong>MARL Model:</strong> Value-Decomposition Networks (VDN) via <code>PyMARL</code>.</li>
+    <li><strong>Reward:</strong> Shared function of system uptime − maintenance cost.</li>
+    <li><strong>Benchmark:</strong> Compare to fixed-interval maintenance policy.</li>
+  </ul>
+
+  <h4>Research Plan 5 · CommNet for Sensor-Agent Communication</h4>
+  <ul>
+    <li><strong>Dataset:</strong> Same as Plan 3 (real) or CMAPSS.</li>
+    <li><strong>Agents:</strong> Each sensor embeds readings and communicates via learned channels.</li>
+    <li><strong>MARL Model:</strong> CommNet implemented in PyTorch.</li>
+    <li><strong>Study:</strong> Ablate communication; measure failure-prediction accuracy.</li>
+    <li><strong>Outcome Metric:</strong> Accuracy ↑ and false-alarm rate ↓ vs non-communicative baseline.</li>
+  </ul>
+
+
+
+
+
+
+
+
+
+
+  
+
+  <!-- ────────────────────────── PLAN 1 ────────────────────────── -->
+  <h3>Plan 1 · Single-Agent RL for Turbofan Engine Maintenance Scheduling</h3>
+  <ul>
+    <li><strong>Approach:</strong> Deep RL agent decides each cycle whether to continue
+      operation or perform a preventive overhaul, replacing static RUL thresholds.</li>
+
+    <li><strong>Dataset &amp; Environment:</strong> NASA C-MAPSS FD001 subset (1 fault
+      mode, 100 engines). Episode = replay of one run-to-failure trajectory; maintenance
+      action truncates the sequence and resets the engine.</li>
+
+    <li><strong>State &amp; Observations:</strong> 14-D continuous sensor vector
+      (non-constant channels); partial observability handled via LSTM or sliding window.</li>
+
+    <li><strong>Action Space:</strong> Discrete {0 = “run”, 1 = “maintain”}.</li>
+
+    <li><strong>Reward:</strong> +1 per healthy cycle, −100 maintenance cost,
+      −1000 failure penalty.</li>
+
+    <li><strong>Algorithms &amp; Tools:</strong> DRQN / PPO-LSTM via
+      <code>Stable Baselines3</code>; episodic replay, reward-shaping curriculum.</li>
+
+    <li><strong>Baselines:</strong> Fixed RUL-threshold policy, periodic maintenance
+      every 50 cycles, reactive run-to-failure, oracle “replace one-cycle-before
+      failure”.</li>
+
+    <li><strong>Metrics:</strong> Avg. cumulative reward (= cost), failure rate,
+      life-utilisation %, uptime/downtime ratio, convergence speed.</li>
+
+    <li><strong>Feasibility:</strong> Offline replay feasible; one-shot overhaul matches
+      dataset structure; limitation = no multi-overhaul per life.</li>
+  </ul>
+
+  <!-- ────────────────────────── PLAN 2 ────────────────────────── -->
+  <h3>Plan 2 · Single-Agent RL for Battery Life Extension &amp; Optimal Usage</h3>
+  <ul>
+    <li><strong>Approach:</strong> RL agent selects cycle-by-cycle usage profile
+      (depth-of-discharge / charge-rate) to maximise total energy throughput before
+      end-of-life (EOL = 70 % capacity).</li>
+
+    <li><strong>Dataset &amp; Environment:</strong> NASA Randomised Battery Usage
+      dataset; empirical ageing model maps action → Δ capacity per cycle with Gaussian
+      noise for cell-to-cell variability.</li>
+
+    <li><strong>State:</strong> [SoH, cycle index] (+ optional recent stress history).</li>
+
+    <li><strong>Actions:</strong> Discrete stress levels {60 % DOD, 80 % DOD,
+      100 % DOD}. Variant: continuous DOD via SAC.</li>
+
+    <li><strong>Reward:</strong> Energy delivered − C·capacity-loss; γ ≈ 0.99 to
+      prefer long-term life.</li>
+
+    <li><strong>Algorithms:</strong> DQN / PPO / SAC (SB3); tiny MLP policy.</li>
+
+    <li><strong>Baselines:</strong> Always-aggressive, always-conservative,
+      manufacturer guideline (≤ 20 % SOC), staged heuristic.</li>
+
+    <li><strong>Metrics:</strong> Total energy, cycles-to-EOL, avg. energy per cycle,
+      reward, generalisation to unseen cells.</li>
+
+    <li><strong>Feasibility:</strong> Fast simulation; main limitation = surrogate
+      ageing model assumes cycle-independent capacity loss.</li>
+  </ul>
+
+  <!-- ────────────────────────── PLAN 3 ────────────────────────── -->
+  <h3>Plan 3 · Multi-Agent RL for Coordinated Fleet Maintenance of Turbofan Engines</h3>
+  <ul>
+    <li><strong>Approach:</strong> N engines (N = 2–5) act as cooperative agents
+      sharing a single maintenance slot; goal = minimising fleet-wide cost.</li>
+
+    <li><strong>Environment:</strong> Parallel replay of independent C-MAPSS runs;
+      one engine may be serviced per step (downtime = 1 cycle); failure = reach end of
+      trajectory.</li>
+
+    <li><strong>Observation (per agent):</strong> local health metric / sensors +
+      flag if bay busy.</li>
+
+    <li><strong>Action:</strong> {0 = idle, 1 = request maintenance}. Conflicts resolved
+      FIFO.</li>
+
+    <li><strong>Reward (global):</strong> +1 per operational engine − 0.1·maintenances
+      − 5·failures.</li>
+
+    <li><strong>Algorithms:</strong> QMIX (PyMARL) primary; COMA / MAPPO as ablations.</li>
+
+    <li><strong>Baselines:</strong> Independent threshold policies, central heuristic
+      (service lowest RUL), periodic stagger.</li>
+
+    <li><strong>Metrics:</strong> Total cost, failure count, bay utilisation %,
+      maintenance timing distribution.</li>
+
+    <li><strong>Feasibility:</strong> Small N keeps joint action tractable; realistic
+      dataset reuse; decentralised execution matches embedded engine monitors.</li>
+  </ul>
+
+  <!-- ────────────────────────── PLAN 4 ────────────────────────── -->
+  <h3>Plan 4 · Multi-Agent RL for Battery-Pack Health Balancing</h3>
+  <ul>
+    <li><strong>Approach:</strong> Each cell in a parallel pack is an agent deciding
+      whether to supply power; objective = maximise pack life via load balancing.</li>
+
+    <li><strong>Environment:</strong> M cells (e.g., 4) with heterogeneous ageing
+      curves taken from NASA dataset; demand = 1 unit per step; exactly one cell must
+      supply (random tie-break).</li>
+
+    <li><strong>Observation:</strong> Own SoH; agents do <em>not</em> observe peers.</li>
+
+    <li><strong>Action:</strong> {1 = supply, 0 = idle}.</li>
+
+    <li><strong>Reward (global):</strong> +1 if demand met, −10 if unmet; cumulative
+      reward equals pack lifetime (steps until all cells EOL).</li>
+
+    <li><strong>Algorithms:</strong> COMA or QMIX (PettingZoo + PyMARL); parameter
+      sharing across agents.</li>
+
+    <li><strong>Baselines:</strong> Round-robin, strongest-cell-first, proportional
+      usage.</li>
+
+    <li><strong>Metrics:</strong> Pack cycles, energy, EOL capacity spread, usage
+      balance index.</li>
+
+    <li><strong>Feasibility:</strong> Dense rewards aid convergence; main assumption =
+      switchable parallel architecture; small-agent count keeps MARL stable.</li>
+  </ul>
+
+  <!-- ────────────────────────── SUMMARY ────────────────────────── -->
+  <p class="has-text-justified">
+    Collectively, Plans 1 – 4 span single-asset policy learning, usage-aware degradation
+    control, and fleet-/pack-level coordination. All are grounded in openly available
+    NASA benchmarks, use off-the-shelf RL libraries (<code>SB3</code>, <code>PyMARL</code>,
+    <code>PettingZoo</code>), specify rigorous baselines, and acknowledge dataset-driven
+    simulation constraints—making them thesis-ready while pushing PdM research toward
+    adaptive, learning-based decision-support systems.
+  </p>
+</section>
+
+
+
+
+
+
+
+
+
+
+          
 <section>
   <h2>2&nbsp;· Deep Dive into Multi-Agent Reinforcement Learning (MARL)</h2>
 
@@ -388,232 +637,7 @@
 </section>
 <!-- INSERT RIGHT AFTER THE PDM SECTION’S </section> -->
           <!-- INSERT RIGHT AFTER SECTION-5’s </section> -->
-<section>
-  <h2>6&nbsp;· Predictive&nbsp;Maintenance Research Plans with Reinforcement Learning (RL / MARL)</h2>
-  <p class="has-text-justified">
-    The four rigorously specified studies below leverage NASA’s open turbofan-engine and
-    lithium-ion battery datasets to demonstrate how single- and multi-agent RL can move
-    beyond fixed RUL-threshold strategies toward adaptive, cost-optimal maintenance and
-    operation policies.  Each plan details the <em>environment design</em>,
-    <em>state / action / reward</em> formulation, <em>algorithms &amp; libraries</em>,
-    <em>baseline comparisons</em>, <em>evaluation metrics</em>, and a realistic
-    <em>feasibility assessment</em>.
-  </p>
 
-  <!-- ────────────────────────── PLAN 1 ────────────────────────── -->
-  <h3>Plan 1 · Single-Agent RL for Turbofan Engine Maintenance Scheduling</h3>
-  <ul>
-    <li><strong>Approach:</strong> Deep RL agent decides each cycle whether to continue
-      operation or perform a preventive overhaul, replacing static RUL thresholds.</li>
-
-    <li><strong>Dataset &amp; Environment:</strong> NASA C-MAPSS FD001 subset (1 fault
-      mode, 100 engines). Episode = replay of one run-to-failure trajectory; maintenance
-      action truncates the sequence and resets the engine.</li>
-
-    <li><strong>State &amp; Observations:</strong> 14-D continuous sensor vector
-      (non-constant channels); partial observability handled via LSTM or sliding window.</li>
-
-    <li><strong>Action Space:</strong> Discrete {0 = “run”, 1 = “maintain”}.</li>
-
-    <li><strong>Reward:</strong> +1 per healthy cycle, −100 maintenance cost,
-      −1000 failure penalty.</li>
-
-    <li><strong>Algorithms &amp; Tools:</strong> DRQN / PPO-LSTM via
-      <code>Stable Baselines3</code>; episodic replay, reward-shaping curriculum.</li>
-
-    <li><strong>Baselines:</strong> Fixed RUL-threshold policy, periodic maintenance
-      every 50 cycles, reactive run-to-failure, oracle “replace one-cycle-before
-      failure”.</li>
-
-    <li><strong>Metrics:</strong> Avg. cumulative reward (= cost), failure rate,
-      life-utilisation %, uptime/downtime ratio, convergence speed.</li>
-
-    <li><strong>Feasibility:</strong> Offline replay feasible; one-shot overhaul matches
-      dataset structure; limitation = no multi-overhaul per life.</li>
-  </ul>
-
-  <!-- ────────────────────────── PLAN 2 ────────────────────────── -->
-  <h3>Plan 2 · Single-Agent RL for Battery Life Extension &amp; Optimal Usage</h3>
-  <ul>
-    <li><strong>Approach:</strong> RL agent selects cycle-by-cycle usage profile
-      (depth-of-discharge / charge-rate) to maximise total energy throughput before
-      end-of-life (EOL = 70 % capacity).</li>
-
-    <li><strong>Dataset &amp; Environment:</strong> NASA Randomised Battery Usage
-      dataset; empirical ageing model maps action → Δ capacity per cycle with Gaussian
-      noise for cell-to-cell variability.</li>
-
-    <li><strong>State:</strong> [SoH, cycle index] (+ optional recent stress history).</li>
-
-    <li><strong>Actions:</strong> Discrete stress levels {60 % DOD, 80 % DOD,
-      100 % DOD}. Variant: continuous DOD via SAC.</li>
-
-    <li><strong>Reward:</strong> Energy delivered − C·capacity-loss; γ ≈ 0.99 to
-      prefer long-term life.</li>
-
-    <li><strong>Algorithms:</strong> DQN / PPO / SAC (SB3); tiny MLP policy.</li>
-
-    <li><strong>Baselines:</strong> Always-aggressive, always-conservative,
-      manufacturer guideline (≤ 20 % SOC), staged heuristic.</li>
-
-    <li><strong>Metrics:</strong> Total energy, cycles-to-EOL, avg. energy per cycle,
-      reward, generalisation to unseen cells.</li>
-
-    <li><strong>Feasibility:</strong> Fast simulation; main limitation = surrogate
-      ageing model assumes cycle-independent capacity loss.</li>
-  </ul>
-
-  <!-- ────────────────────────── PLAN 3 ────────────────────────── -->
-  <h3>Plan 3 · Multi-Agent RL for Coordinated Fleet Maintenance of Turbofan Engines</h3>
-  <ul>
-    <li><strong>Approach:</strong> N engines (N = 2–5) act as cooperative agents
-      sharing a single maintenance slot; goal = minimising fleet-wide cost.</li>
-
-    <li><strong>Environment:</strong> Parallel replay of independent C-MAPSS runs;
-      one engine may be serviced per step (downtime = 1 cycle); failure = reach end of
-      trajectory.</li>
-
-    <li><strong>Observation (per agent):</strong> local health metric / sensors +
-      flag if bay busy.</li>
-
-    <li><strong>Action:</strong> {0 = idle, 1 = request maintenance}. Conflicts resolved
-      FIFO.</li>
-
-    <li><strong>Reward (global):</strong> +1 per operational engine − 0.1·maintenances
-      − 5·failures.</li>
-
-    <li><strong>Algorithms:</strong> QMIX (PyMARL) primary; COMA / MAPPO as ablations.</li>
-
-    <li><strong>Baselines:</strong> Independent threshold policies, central heuristic
-      (service lowest RUL), periodic stagger.</li>
-
-    <li><strong>Metrics:</strong> Total cost, failure count, bay utilisation %,
-      maintenance timing distribution.</li>
-
-    <li><strong>Feasibility:</strong> Small N keeps joint action tractable; realistic
-      dataset reuse; decentralised execution matches embedded engine monitors.</li>
-  </ul>
-
-  <!-- ────────────────────────── PLAN 4 ────────────────────────── -->
-  <h3>Plan 4 · Multi-Agent RL for Battery-Pack Health Balancing</h3>
-  <ul>
-    <li><strong>Approach:</strong> Each cell in a parallel pack is an agent deciding
-      whether to supply power; objective = maximise pack life via load balancing.</li>
-
-    <li><strong>Environment:</strong> M cells (e.g., 4) with heterogeneous ageing
-      curves taken from NASA dataset; demand = 1 unit per step; exactly one cell must
-      supply (random tie-break).</li>
-
-    <li><strong>Observation:</strong> Own SoH; agents do <em>not</em> observe peers.</li>
-
-    <li><strong>Action:</strong> {1 = supply, 0 = idle}.</li>
-
-    <li><strong>Reward (global):</strong> +1 if demand met, −10 if unmet; cumulative
-      reward equals pack lifetime (steps until all cells EOL).</li>
-
-    <li><strong>Algorithms:</strong> COMA or QMIX (PettingZoo + PyMARL); parameter
-      sharing across agents.</li>
-
-    <li><strong>Baselines:</strong> Round-robin, strongest-cell-first, proportional
-      usage.</li>
-
-    <li><strong>Metrics:</strong> Pack cycles, energy, EOL capacity spread, usage
-      balance index.</li>
-
-    <li><strong>Feasibility:</strong> Dense rewards aid convergence; main assumption =
-      switchable parallel architecture; small-agent count keeps MARL stable.</li>
-  </ul>
-
-  <!-- ────────────────────────── SUMMARY ────────────────────────── -->
-  <p class="has-text-justified">
-    Collectively, Plans 1 – 4 span single-asset policy learning, usage-aware degradation
-    control, and fleet-/pack-level coordination. All are grounded in openly available
-    NASA benchmarks, use off-the-shelf RL libraries (<code>SB3</code>, <code>PyMARL</code>,
-    <code>PettingZoo</code>), specify rigorous baselines, and acknowledge dataset-driven
-    simulation constraints—making them thesis-ready while pushing PdM research toward
-    adaptive, learning-based decision-support systems.
-  </p>
-</section>
-<section>
-  <h2>4&nbsp;· Exploring the Synergy&nbsp;— Multi-Agent RL for Predictive Maintenance</h2>
-
-  <!-- --- 4.1 Research problems & challenges --- -->
-  <h3>4.1 Identifying Research Problems &amp; Challenges</h3>
-  <p>
-    Traditional PdM treats each asset in isolation, yet industrial plants exhibit strong
-    inter-component dependencies: cooling loops affect spindle life, pumps influence
-    bearing load, etc.  MARL provides a principled framework to <em>jointly</em> optimise
-    maintenance decisions across such coupled assets, be they physical robots, distributed
-    sensors, or human technicians.  Key challenges include defining joint state/action
-    spaces, designing sparse but informative rewards (downtime ↘, cost ↘, safety ↗),
-    coping with long temporal horizons, and ensuring policy interpretability for field
-    engineers.
-  </p>
-
-  <!-- --- 4.2 How existing MARL methods map to PdM needs --- -->
-  <h3>4.2 Leveraging MARL Methodologies for PdM</h3>
-  <p>
-    <strong>Value-factorisation</strong> (QMIX, QPLEX) enables decentralised agents
-    (e.g.&nbsp;sensors) to learn local actions that minimise system-wide risk.  
-    <strong>Central-critic actor–critic</strong> algorithms (MADDPG, MAPPO) suit teams of
-    maintenance robots needing continuous control under mixed objectives.  
-    <strong>Counterfactual methods</strong> (COMA) illuminate which agent’s inspection
-    avoided a failure, solving credit assignment.  
-    <strong>Communication-learning nets</strong> (CommNet, ATOC) teach agents when &amp;
-    what to broadcast, reducing bandwidth while boosting diagnostic accuracy.  
-    Finally, <strong>Transformer-based MAT</strong> treats multi-sensor time-series as
-    sequences, scaling to variable asset counts and heterogeneous sensors.
-  </p>
-
-  <!-- --- 4.3 Five concrete research plans --- -->
-  <h3>4.3 Detailed Research Plans</h3>
-
-  <h4>Research Plan 1 · QMIX on AI4I-2020</h4>
-  <ul>
-    <li><strong>Dataset:</strong> AI4I 2020 synthetic milling dataset (14 sensors, 5 failure modes).</li>
-    <li><strong>Agents &amp; Observations:</strong> Treat each key sensor (temp, vibration, torque …) as an agent.</li>
-    <li><strong>MARL Model:</strong> QMIX with <code>PyMARL</code>.</li>
-    <li><strong>Modifications:</strong> GRU encoder per agent to capture temporal context; focal-loss to rebalance classes.</li>
-    <li><strong>Evaluation:</strong> Precision, Recall, F1, AUC vs single-agent NN baseline.</li>
-  </ul>
-
-  <h4>Research Plan 2 · MADDPG Simulated Maintenance Robots</h4>
-  <ul>
-    <li><strong>Environment:</strong> SimPy-based factory with multiple assets; actions = inspect / lubricate / repair.</li>
-    <li><strong>Dataset:</strong> Synthetic online simulation (no real logs required).</li>
-    <li><strong>MARL Model:</strong> MADDPG (PyTorch RL or TF-Agents).</li>
-    <li><strong>Reward:</strong> −(downtime + maintenance cost); +uptime.</li>
-    <li><strong>Metrics:</strong> Mean failures ↓, total cost ↓, average uptime ↑ over 10⁶ steps.</li>
-  </ul>
-
-  <h4>Research Plan 3 · MAT for Multi-Sensor RUL Prediction</h4>
-  <ul>
-    <li><strong>Dataset:</strong> Any public multi-sensor time-series (e.g.&nbsp;Hydraulic System).</li>
-    <li><strong>Agents:</strong> One per sensor stream; observations are sliding windows.</li>
-    <li><strong>MARL Model:</strong> Multi-Agent Transformer (MAT) in PyTorch.</li>
-    <li><strong>Adaptation:</strong> Sigmoid head for binary failure; variable sequence lengths.</li>
-    <li><strong>Evaluation:</strong> AUROC vs LSTM and ARIMA baselines.</li>
-  </ul>
-
-  <h4>Research Plan 4 · VDN on Pump–Motor–Bearing Simulator</h4>
-  <ul>
-    <li><strong>Data:</strong> Synthetic generator (TSGM) with mutual degradation coupling.</li>
-    <li><strong>Agents:</strong> Pump, motor, bearing (3).</li>
-    <li><strong>MARL Model:</strong> Value-Decomposition Networks (VDN) via <code>PyMARL</code>.</li>
-    <li><strong>Reward:</strong> Shared function of system uptime − maintenance cost.</li>
-    <li><strong>Benchmark:</strong> Compare to fixed-interval maintenance policy.</li>
-  </ul>
-
-  <h4>Research Plan 5 · CommNet for Sensor-Agent Communication</h4>
-  <ul>
-    <li><strong>Dataset:</strong> Same as Plan 3 (real) or CMAPSS.</li>
-    <li><strong>Agents:</strong> Each sensor embeds readings and communicates via learned channels.</li>
-    <li><strong>MARL Model:</strong> CommNet implemented in PyTorch.</li>
-    <li><strong>Study:</strong> Ablate communication; measure failure-prediction accuracy.</li>
-    <li><strong>Outcome Metric:</strong> Accuracy ↑ and false-alarm rate ↓ vs non-communicative baseline.</li>
-  </ul>
-
-</section>
 
 
 
