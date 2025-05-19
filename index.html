@@ -157,6 +157,122 @@
         <p>In multi-agent reinforcement learning, multiple decision-making agents learn and interact in a shared environment. This setting introduces unique challenges beyond single-agent RL, such as non-stationarity (an agent’s environment is changing due to other agents’ learning), credit assignment (attributing a global reward to individual agents’ actions), and partial observability (each agent has limited local view). Traditionally, MARL problems are categorized by the nature of agent interactions – fully cooperative (agents share goals and rewards), fully competitive (zero-sum games), or mixed settings. To handle these challenges, modern MARL algorithms often leverage centralized training with decentralized execution (CTDE): agents are trained with global information (e.g. a centralized critic or joint value function) but execute using only local observations, combining the stability of centralized learning with the scalability of independent action at runtime. Below, we survey major MARL methodologies from the past five years and compare their approaches.</p>
     </section>
 
+
+
+          <!-- INSERT RIGHT AFTER THE EXECUTIVE-SUMMARY </section> BLOCK -->
+<section>
+  <h2>2&nbsp;· Deep Dive into Multi-Agent Reinforcement Learning (MARL)</h2>
+
+  <!-- --- 2.1 Fundamentals --- -->
+  <h3>2.1 Fundamentals of MARL</h3>
+  <p>
+    Multi-Agent Reinforcement Learning (MARL) generalises single-agent RL to settings where
+    several autonomous agents learn simultaneously in the same environment.  Because each
+    agent’s policy evolves over time, every other agent experiences a <em>non-stationary</em>
+    world, violating the Markov assumption that underlies most classic RL algorithms.
+    This non-stationarity drives core challenges such as (i) multi-agent credit assignment,
+    (ii) exploration of a combinatorial joint-action space, (iii) coordination under partial
+    observability, (iv) scalability to dozens or hundreds of agents, and (v) equilibrium
+    selection in competitive games.
+  </p>
+
+  <!-- --- 2.2 Methodology Classes --- -->
+  <h3>2.2 Classification of MARL Methodologies</h3>
+  <p>
+    <strong>Value-based.</strong> Independent Q-Learning (IQL) trains one Q-network per
+    agent but struggles with non-stationarity.  Value-Decomposition Networks (VDN)
+    assume the global value is the sum of per-agent values; QMIX extends this with a
+    monotonic mixing network conditioned on the global state; QPLEX adds a duplex
+    duelling mixer to reach the full Individual-Global-Max (IGM) class.<br>
+    <strong>Policy-based.</strong> MADDPG introduces a centralised critic for continuous
+    control; MAPPO ports PPO’s clipped-objective stability to cooperative teams.<br>
+    <strong>Actor-critic.</strong> COMA computes counterfactual advantages to solve
+    credit assignment; Actor-Attention-Critic variants embed attention for
+    partial-observability.  Transformer-based MAT recasts MARL as sequence modelling,
+    excelling in variable-sized agent sets.
+  </p>
+
+  <!-- --- 2.3 Comparative Table --- -->
+  <h3>2.3 Comparative Analysis of Representative Algorithms</h3>
+  <table class="table is-striped is-fullwidth">
+    <thead>
+      <tr>
+        <th>Method</th><th>Core Principle</th><th>Strengths</th><th>Weaknesses</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>IQL</td>
+        <td>Independent Q-functions</td>
+        <td>Simple; off-policy</td>
+        <td>Non-stationary learning signal</td>
+      </tr>
+      <tr>
+        <td>VDN</td>
+        <td>Additive value factorisation</td>
+        <td>Easy credit assignment</td>
+        <td>Limited expressiveness</td>
+      </tr>
+      <tr>
+        <td>QMIX</td>
+        <td>Monotonic mixing network</td>
+        <td>Scales to SMAC; CTDE-consistent</td>
+        <td>Monotonicity constraint</td>
+      </tr>
+      <tr>
+        <td>QPLEX</td>
+        <td>Duplex duelling IGM mixer</td>
+        <td>Richer joint-value class</td>
+        <td>Higher model complexity</td>
+      </tr>
+      <tr>
+        <td>MADDPG</td>
+        <td>Central critic, continuous actions</td>
+        <td>Handles mixed settings</td>
+        <td>Hyper-parameter sensitive</td>
+      </tr>
+      <tr>
+        <td>MAPPO</td>
+        <td>PPO with central critic</td>
+        <td>Stable, sample-efficient</td>
+        <td>On-policy (higher data cost)</td>
+      </tr>
+      <tr>
+        <td>COMA</td>
+        <td>Counterfactual advantage</td>
+        <td>Elegant credit assignment</td>
+        <td>Expensive critic updates</td>
+      </tr>
+      <tr>
+        <td>MAT</td>
+        <td>Transformer sequence model</td>
+        <td>Handles variable-agent sets</td>
+        <td>Heavy compute budget</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- --- 2.4 Timeline --- -->
+  <h3>2.4 Timeline of Key Advances (2017 – 2024)</h3>
+  <p>
+    <strong>2017 – 2018:</strong> MADDPG introduces centralised critics; VDN &amp; QMIX
+    pioneer value factorisation.<br>
+    <strong>2019:</strong> COMA solves credit assignment; population-based AlphaStar
+    showcases large-scale self-play.<br>
+    <strong>2020 – 2021:</strong> WQMIX and QPLEX lift representation limits; MAPPO
+    demonstrates the raw power of well-tuned PPO in multi-agent settings.<br>
+    <strong>2022 – 2024:</strong> Residual &amp; hierarchical mixers (ResQ, HAVEN),
+    mean-field extensions, and Transformer-based MAT push scalability and generalisation.
+  </p>
+</section>
+
+
+
+          
+
+
+
+          
     <section>
         <h2>Classification of MARL Methods (2018–2024)</h2>
         
