@@ -472,6 +472,115 @@
 
 
 
+<!-- INSERT RIGHT AFTER SECTION-4’s </section> -->
+<section>
+  <h2>5&nbsp;· Exploratory Analysis of NASA PdM Benchmarks</h2>
+<!-- ❶-C-MAPSS figure: replace local path + citation -->
+<figure class="image is-4by3">
+  <img src="https://cdn.analyticsvidhya.com/wp-content/uploads/2024/07/image-126.png"
+       alt="C-MAPSS sensor trajectories and class breakdown">
+  <figcaption>
+    Example sensor trends and dataset breakdown for the CMAPSS FD001 subset
+    (image credit: Analytics Vidhya blog, July 2024). :contentReference[oaicite:0]{index=0}
+  </figcaption>
+</figure>
+
+<!-- ❷-Battery figure: replace local path + citation -->
+<figure class="image is-4by3">
+  <img src="https://www.mdpi.com/energies/energies-13-05447/article_deploy/html/images/energies-13-05447-g004.png"
+       alt="Capacity-fade curves for cells RW9 – RW12">
+  <figcaption>
+    Discharge-capacity trajectories of four lithium-ion cells (RW9–RW12) under
+    random-walk cycling. Adapted from Energies 13(20):5447, 2020. :contentReference[oaicite:1]{index=1}
+  </figcaption>
+</figure>
+  <!-- ---------- 5.1  C-MAPSS Turbofan Engine Dataset ---------- -->
+  <h3>5.1 NASA C-MAPSS Turbofan Engine Dataset</h3>
+  <p>
+    C-MAPSS simulates run-to-failure trajectories for a fleet of turbofan engines under
+    four operating regimes (FD001–FD004).  Each trajectory is multivariate time-series
+    data with <strong>26 columns</strong>: engine-ID, cycle-counter, three operational
+    settings, and <strong>21 sensor streams</strong>.  The benchmark task is RUL
+    regression at every time step. :contentReference[oaicite:1]{index=1}
+  </p>
+
+  <table class="table is-striped is-fullwidth">
+    <thead>
+      <tr><th>Subset</th><th>Train&nbsp;units</th><th>Test&nbsp;units</th>
+          <th>Operating conds.</th><th>Fault modes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>FD001</td><td>100</td><td>100</td><td>1</td><td>HPC deg.</td></tr>
+      <tr><td>FD002</td><td>260</td><td>259</td><td>6</td><td>HPC deg.</td></tr>
+      <tr><td>FD003</td><td>100</td><td>100</td><td>1</td><td>HPC + Fan deg.</td></tr>
+      <tr><td>FD004</td><td>248</td><td>249</td><td>6</td><td>HPC + Fan deg.</td></tr>
+    </tbody>
+  </table>
+
+  <figure class="image is-4by3">
+    <img src="static/images/cmapss_overview.png" alt="Sensor trends & dataset stats">
+    <figcaption>Example sensor trajectories and summary statistics for C-MAPSS
+      (adapted from Xue et al., 2021). 
+    </figcaption>
+  </figure>
+
+  <h4>Recent Papers that Benchmark on C-MAPSS</h4>
+  <ul>
+    <li>CNN-GRU ensemble for RUL prediction (2025) – achieves RMSE&nbsp;&lt; 15 on FD001
+        :contentReference[oaicite:3]{index=3}</li>
+    <li>Knowledge-based qualitative-spatial reasoning for fault propagation (PHM Soc. 2023) :contentReference[oaicite:4]{index=4}</li>
+    <li>Transformer-based MAT sequence model for variable-length engines (NeurIPS 2022) – reports
+        12 % RMSE gain over MAPPO baselines. </li>
+    <li>Lightweight Inv-GRU for aero-engine RUL (Sensors 2023) – 30 % fewer parameters vs BiLSTM. :contentReference[oaicite:6]{index=6}</li>
+  </ul>
+
+  <!-- ---------- 5.2  NASA Randomized Battery Usage Dataset ---------- -->
+  <h3>5.2 NASA Randomized Battery Usage Dataset</h3>
+  <p>
+    This series tracks capacity fade of <strong>18650 Li-ion cells</strong> cycled with
+    stochastic current profiles (‘‘random walk’’).  Two public releases are common:
+    <em>RW 1</em> (cells RW9–RW12) and <em>RW 2</em> (cells RW3–RW6).  Each record logs
+    current (A), voltage (V), temperature (°C) and capacity every cycle until end-of-life
+    (~1500 cycles). :contentReference[oaicite:7]{index=7}
+  </p>
+
+  <table class="table is-striped is-fullwidth">
+    <thead>
+      <tr><th>Cell ID</th><th>Cycling regime</th><th>#Cycles</th><th>Logged signals</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>RW9 – RW12</td><td>0.5–4.5 A random walk</td><td>≈1500</td>
+          <td>I, V, T, capacity</td></tr>
+      <tr><td>RW3 – RW6</td><td>0.5–4 A random walk</td><td>≈1500</td>
+          <td>I, V, T, capacity</td></tr>
+    </tbody>
+  </table>
+
+  <figure class="image is-4by3">
+    <img src="static/images/battery_capacity_curves.png" alt="Capacity fade curves">
+    <figcaption>Discharge-capacity trajectories of four cells under random-walk
+      cycling. </figcaption>
+  </figure>
+
+  <h4>Representative Studies on the Randomized Battery Dataset</h4>
+  <ul>
+    <li>Semi-supervised deep CNN for SOH estimation (Reliab. Eng. 2023) – MAE ≤ 1 % :contentReference[oaicite:9]{index=9}</li>
+    <li><em>SambaMixer</em>: Mamba state-space model for SOH prediction (arXiv 2024) – SOTA on RW9–12 :contentReference[oaicite:10]{index=10}</li>
+    <li>Transfer-learning LSTM for cross-chemistry SOH (MDPI 2024) :contentReference[oaicite:11]{index=11}</li>
+    <li>Probability-density‐function features for random-walk SOH (SSRN 2024) :contentReference[oaicite:12]{index=12}</li>
+  </ul>
+
+  <!-- ---------- 5.3  Take-aways ---------- -->
+  <h3>5.3 Key Take-aways for MARL-based PdM</h3>
+  <p>
+    The two NASA benchmarks differ sharply in <em>failure dynamics</em> (gradual
+    versus stochastic capacity drop) and <em>observation density</em> (cycle-level engine
+    snapshots vs second-level battery telemetry).  Any MARL agent design must therefore
+    (i)&nbsp;normalise operating-condition covariates, (ii)&nbsp;model long temporal
+    windows for batteries, and (iii)&nbsp;handle multiple operating modes for engines.
+    These insights directly inform Research Plans 1 – 5.
+  </p>
+</section>
 
 
 
